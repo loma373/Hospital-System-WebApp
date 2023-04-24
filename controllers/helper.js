@@ -203,7 +203,6 @@ const Logout=async(req,res)=>{
 
 const filterSearch=async(req,res)=>{
     const docs=await docdata.find({specialization:req.body.specialization,"exp":{$gt:Number(req.body.exp)}})
-    console.log(docs)
     res.render("showdocs",{
         data:docs
     })
