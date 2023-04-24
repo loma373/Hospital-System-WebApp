@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>Apollo Hospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+  </style>
+  
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item ms-5 ps-5 me-5 ps-5">
+            <div class="navbar-brand mx-auto"><b>Apollo Hospitals</b></div>
+          </li>
+        </ul>
+        <a class="" href="/api/v1/patdash">refresh</a>
+        <a class="nav-link me-5" aria-current="page" href="/api/v1/logout">Logout</a>
+      </div>
+    </div>
+  </nav>
+    <h1>Patient Dashboard</h1>
+    <% if (msg) {%>
+        <div class="alert alert-success alert-dismissible fade show ms-5 me-5" role="alert">
+            <%= msg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <%} %>
+    <div class="mx-auto col-11 col-md col-lg border border-2 bg bg-light p-2">
+        <h3>Your details</h3>
+        <div>
+            <table>
+                <tr class="bg bg-warning">
+                <th>Name</th>
+                <th>Number</th>
+                <th>Room</th>
+                <th>Symptoms</th>
+
+                </tr>
+                <tr>
+                    <td><%= data2.name %></td>
+                    <td><%= data2.phno %></td>
+                    <% if(data2.room!=null){ %>
+                        <td><%= data2.room %></td>
+                    <%} else{%>
+                        <td>-</td>
+                    <%} %>
+
+                    <% if(data2.symptoms!=null) {%>
+                        <td><%= data2.symptoms %></td>
+                    <%} else {%>
+                            <td>-</td>
+                    <%} %>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="m-3">
+            <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#appointmentdetails" role="button" aria-expanded="false" aria-controls="appointmentdetails">
+                Appointment Details
+            </a>
+            <button class="btn btn-primary ps-3" type="button" data-bs-toggle="collapse" data-bs-target="#makeappointment" aria-expanded="false" aria-controls="makeappointment">
+                Make an Appointment
+            </button>
+            <button class="btn btn-primary ps-3" type="button" data-bs-toggle="collapse" data-bs-target="#editroom" aria-expanded="false" aria-controls="editroom">
+                Edit room details
+            </button>
+            <button class="btn btn-primary ps-3" type="button" data-bs-toggle="collapse" data-bs-target="#editsymptoms" aria-expanded="false" aria-controls="editsymptoms">
+                Edit Symptoms
+            </button>
+            
+        </p>
+
+        <div id="appointmentdetails">
+            <h4>Your appointment details</h4>
+            <table>
+                <tr class="bg bg-warning">
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Appointment Time</th>
+                </tr>
+                <% data.forEach(element=> { %>
+                <tr>
+                    <td><%= element.doctor.name %></td>
+                    <td><%= element.doctor.phno %></td>  
+                    <td><%= element.time %></td> 
+                    <% if(element.time==null){ %>
+                        <td>
+                            <form class="col" action="/api/v1/edit" method="post">
+                                <input type="text" style="display:none;" name="id" value="<%= data2._id %>">
+                                <input type="text" style="display:none;" name="appointmentId" value="<%= element._id %>">
+                                <div class="col-sm-10">
+                                    <label class="control-label col-sm-2" for="slot">Select Time:</label>
+                                    <div class="col-sm-10">          
+                                    <select class="form-select" aria-label="Default select example" id="time" name="time">
+                                        <option selected>-</option>
+                                        <% element.doctor.freeslots.forEach(item=>{%>
+                                            <option value="<%= item %>"><%= item %></option>
+                                        <%}) %>
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row mt-3">        
+                                    <div class="col-sm-offset-2 col-sm-12">
+                                      <button type="submit" class="btn btn-outline-success">Book Appointment</button>
+                                    </div>
+                                </div>
+                            </form> 
+                        </td>
+                    <%}  %>
+                    <td>
+                        <form action="/api/v1/delete" method="post">
+                            <input type="text" style="display: none;" name="id" value="<%= element._id %>">
+                            <input type="text" style="display:none;" name="marker" value="pat">
+                            <button class="btn btn-outline-danger" type="submit">Cancel Appointment</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+            </table>
+        </div>
+        
+        <div id="makeappointment" class="collapse">
+            <form class="col" action="/api/v1/edit" method="post">
+                <input type="text" style="display:none;" name="id" value="<%= data2._id %>">
+                <div class="form-group col-sm-10">
+                    <label class="control-label col-sm-2" for="room"><h4>Choose Doctor:</h4></label>
+                        <select class="form-select" aria-label="Default select example" name="doctor">
+                            <option selected value="">Choose a Doctor</option>
+                            <% data3.forEach(element=> { %>
+                                <% if(element.verify==true) {%>
+                                    <option value="<%= element._id %>"><%= element.name %> - <%= element.specialization %></option>
+                                <%} %>
+                            <% }) %>
+                        </select>
+                </div>
+
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                        <button type="submit" class="btn btn-outline-success">Select Doctor</button>
+                    </div>
+                </div>
+            </form> 
+        </div>
+
+        
+
+        <div id="selecttime" class="collapse">
+            <form class="col" action="/api/v1/edit" method="post">
+                <input type="text" style="display:none;" name="patientid" value="<%= data2._id %>">
+                <div class="col-sm-10">
+                    <label class="control-label col-sm-2" for="slot">Select Time:</label>
+                        <div class="col-sm-10">          
+                        <select class="form-select" aria-label="Default select example" id="time" name="time">
+                            <option selected>-</option>
+                            <% data.forEach(element=>{%>
+                                <% element.doctor.freeslots.forEach(item=>{%>
+                                    <option value="<%= item %>"><%= item %></option>
+                                <%}) %>
+                            <%}) %>
+                        </select>
+                        </div>
+                </div>
+
+                
+
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Book Appointment</button>
+                    </div>
+                </div>
+            </form> 
+        </div>
+
+        <div id="editroom" class="collapse">
+            <form class="col" action="/api/v1/edit" method="post">
+                <input type="text" style="display:none;" name="id" value="<%= data2._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="room"><h4>Choose Room:</h4></label>
+                    <div class="col-sm-10">          
+                        <select class="form-select" aria-label="Default select example" name="room">
+                            <option selected value=" ">Choose a room</option>
+                            <option value="Single">Single 1500/-</option>
+                            <option value="Double">Double 1000/-</option>
+                            <option value="Deluxe">Deluxe 2000/-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success" onClick="window.location.reload()">Book Room</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="editsymptoms" class="collapse">
+            <form class="col" action="/api/v1/edit" method="post">
+                <input type="text" style="display:none;" name="id" value="<%= data2._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="email"><h4>Symptoms:</h4></label>
+                    <div class="col-sm-10">
+                        <input type="symptoms" class="form-control" id="symptoms" placeholder="Enter Symptoms" name="symptoms">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        
+    </div>
+
+</body>
+  
+</html>

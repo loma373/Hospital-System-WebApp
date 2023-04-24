@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+  <title>Apollo Hospital</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    
+  </style>
+  
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item ms-5 ps-5 me-5 ps-5">
+            <div class="navbar-brand mx-auto"><b>Apollo Hospitals</b></div>
+          </li>
+        </ul>
+        <a class="nav-link me-5" aria-current="page" href="/api/v1/home">Back to Home Page</a>
+      </div>
+    </div>
+  </nav>
+    <h1>All Docs</h1>
+
+    <div class="d-flex justify-content-between row row-cols-1 row-cols-md-3 g-4 pt-4 pb-2">
+    <% data.forEach(element=> { %>
+      <% if(element.verify==true) {%>
+      <div class="card col">
+        <img src="" class="card-img-top embed-responsive-item" alt="..."/>
+        <div class="card-body">
+          <p class="card-text"><%= element.photo%></p>
+
+          <h5 class="card-title"><%= element.name %></h5>
+          <p class="card-text"><%= element.exp%> years</p>
+          <p class="card-text"><%= element.specialization%></p>
+          <a class="btn btn-outline-success" href="/api/v1/makeappointment/<%= element._id %>" type="submit">Book Appointment</a>
+        </div>
+      </div>
+      <%} %>
+      <% }) 
+    %>
+    </div>
+
+   <%- include('footer') %>
+</body>
+  
+</html>

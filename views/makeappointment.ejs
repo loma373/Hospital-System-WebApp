@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>Apollo Hospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    
+  </style>
+  
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item ms-5 ps-5 me-5 ps-5">
+                <div class="navbar-brand mx-auto"><b>Apollo Hospitals</b></div>
+              </li>
+            </ul>
+            <a class="nav-link me-5" aria-current="page" href="/api/v1/home">Back to Home Page</a>
+          </div>
+        </div>
+    </nav>
+
+    
+    <h1>Doctor Details</h1>
+    <div class="p-3">
+        <table>
+            <tr class="bg bg-warning">
+              <th>Name</th>
+              <th>Number</th>
+              <th>Department</th>
+              <th>Years of Experience</th>
+              <th>Shift</th>
+              <th>Slot Timing</th>
+            </tr>
+            <tr>
+                <td><%= data.name %></td>
+                <td><%= data.phno %></td>
+                <td><%= data.specialization %></td>
+                <td><%= data.exp %></td>
+                <% if(data.shift=="1"){ %>
+                    <td>Morning</td>
+                <%} else {%>
+                    <td>Evening</td>
+                <%} %>
+
+                <% if(data.slots=="1"){ %>
+                    <td>15 mins</td>
+                <%} else {%>
+                    <td>30 mins</td>
+                <%} %>
+              </tr>
+        </table>
+    </div>
+
+    <div class="p-4">
+      <p>
+        <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Doctor Profile
+        </a>
+        <button class="btn btn-primary ps-3" type="button" data-bs-toggle="collapse" data-bs-target="#appointmentform" aria-expanded="false" aria-controls="appointmentform">
+          Make Appointment
+        </button>
+      </p>
+      <div id="collapseExample">
+        <div class="card card-body">
+          <%= data.intro %>
+        </div>
+    </div>
+
+      <div class="collapse m-5" id="appointmentform">
+        <form class="form-horizontal" action="/api/v1/addpat2" method="POST">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="name">Name:</label>
+                <div class="col-sm-10">
+                  <input type="name" class="form-control" id="name" placeholder="Enter name" name="name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="phno">Phone:</label>
+                <div class="col-sm-10">
+                  <input type="phno" class="form-control" id="phno" placeholder="Enter number" name="phno">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="text" style="display: none;" name="doctor" id="doctor" value="<%= data._id %>">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="time">Slot duration(in minutes):</label>
+                <div class="col-sm-10">          
+                    <select class="form-select" aria-label="Default select example" id="time" name="time">
+                        <option selected>-</option>
+                        <% data.freeslots.forEach(element=>{%>
+                            <option value="<%= element %>"><%= element %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group row mt-3">        
+              <div class="col-sm-offset-2 col-sm-12">
+                <button type="submit" class="btn btn-outline-success" value="getAppointment">Get Appointment</button>
+              </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    
+    <%- include('footer') %>
+</body>
+  
+</html>

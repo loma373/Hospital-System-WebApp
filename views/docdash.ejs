@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>Apollo Hospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+	.btn.btn-primary:active{
+		color:greenyellow;
+		background-color:black;
+	}
+
+	.nav-link:hover{
+		color:red;
+	}
+    
+  </style>
+  
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item ms-5 ps-5 me-5 ps-5">
+            <div class="navbar-brand mx-auto"><b>Apollo Hospitals</b></div>
+          </li>
+        </ul>
+		<a class="" href="/api/v1/docdash">refresh</a>
+        <a class="nav-link me-5" aria-current="page" href="/api/v1/logout">Log Out</a>
+      </div>
+    </div>
+  </nav>
+  <br>
+  <h2 class="ps-5 ms-3">Hello, <%= data.name %></h2>
+
+  <% if(data.verify==false){ %>
+    <div class="alert alert-danger m-3">
+      Please update shift details to get appointments.
+    </div>
+  <%} %>
+  <% if (msg) {%>
+    <div class="alert alert-success alert-dismissible fade show ms-5 me-5" role="alert">
+        <%= msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <%} %>
+  <div class="mx-auto col-11 col-md col-lg border border-2 bg bg-light p-2">
+    
+    <h4>Your details</h4>
+    <table>
+        <tr class="bg bg-warning">
+          <th>Name</th>
+          <th>Department</th>
+          <th>Shift</th>
+          <th>Slot Timing</th>
+        </tr>
+        <tr>
+            <td><%= data.name %></td>
+            <td><%= data.specialization %></td>
+            <% if(data.shift=="1"){ %>
+                <td>Morning</td>
+            <%} else if(data.shift=="2") {%>
+                <td>Evening</td>
+            <%} else{%>
+                <td>-</td>
+            <%} %>
+
+            <% if(data.slots=="1"){ %>
+                <td>15 mins</td>
+            <%}else if(data.slots=="2"){ %>
+                <td>30 mins</td>
+            <%} 
+            else {%>
+                <td>-</td>
+            <%} %>
+          </tr>
+    </table>
+
+    <div class="m-3">
+		<div class="">	
+			<div>
+				<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#appointmentdetails" aria-expanded="false" aria-controls="appointmentdetails">
+					Your Patients
+				</button>
+				<button class="btn btn-primary ps-3" data-bs-toggle="collapse" data-bs-target="#editshiftdetails" aria-expanded="false" aria-controls="editshiftdetails">
+					Edit shift timings
+				</button>
+				<button class="btn btn-outline-danger ps-3" data-bs-toggle="collapse" data-bs-target="#changepassword" aria-expanded="false" aria-controls="changepassword">
+					Change Password
+				</button>
+				<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#profile" aria-expanded="false" aria-controls="profile">
+					Your Profile
+				</button>
+			</div>
+			<div class="pt-2 pb-2">
+				
+					<a class="btn btn-outline-primary dropdown-toggle" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					  Add details
+					</a>
+			
+				<ul class="dropdown-menu">
+					<li><button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#educationaldetails"  aria-expanded="false" aria-controls="educationaldetails">
+						Edit Educational Details
+					</button></li>
+					<li><button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#workexpdetails" aria-expanded="false" aria-controls="workexpdetails">
+						Edit Work Experience
+					</button></li>
+					<li><button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#personaldetails" aria-expanded="false" aria-controls="personaldetails">
+						Edit Personal Details
+					</button></li>
+					<li><button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#introduction" aria-expanded="false" aria-controls="Introduction">
+						Edit Introduction
+					</button></li>
+				</ul>
+			</div>
+		</div>
+
+		<div id="personaldetails" class="collapse">
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="gender">Enter Gender:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Enter gender" name="gender">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="age">Enter age</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Enter" name="age">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+
+
+		<div id="changepassword" class="collapse">
+			<h2> Change Password</h2>
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="class12">Enter Current Password:</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="currpassword" placeholder="Enter" name="currpassword">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="class12marks">Enter new password</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="newpassword" placeholder="Enter" name="newpassword">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="email">Reenter new password</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" id="newppassword" placeholder="Enter" name="newppassword">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+
+
+		<div id="profile" class="collapse">
+			<table>
+				<tr>
+					<th>Phone Number</th>
+					<td><%= data.phno %></td>
+				</tr>
+				<tr>
+					<th>Email Address</th>
+					<td><%= data.email %></td>
+				</tr>
+				<tr>
+					<th>Gender</th>
+					<td><%= data.gender %></td>
+				</tr>
+				<tr>
+					<th>Age</th>
+					<td><%= data.age %></td>
+				</tr>
+				<tr>
+					<th>Specialization</th>
+					<td><%= data.specialization %></td>
+				</tr>
+				<tr>
+					<th>Class 12 Education</th>
+					<td><%= data.class12 %></td>
+				</tr>
+				<tr>
+					<th>Work Experience</th>
+					<td><%= data.workexp %></td>
+				</tr>
+				<tr>
+					<th>Total Experience</th>
+					<td><%= data.exp %></td>
+				</tr>
+				<tr>
+					<th>Introduction</th>
+					<td><%= data.intro %></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div id="educationaldetails" class="collapse">
+			<h2> Update Education Details</h2>
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="class12">Class 12 Institution:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="class12" placeholder="Enter Institution" name="class12">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="class12marks">Class 12 Marks (in percentage):</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="class12marks" placeholder="Enter Marks" name="class12marks">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="email">MBBS Institution:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mbbs" placeholder="Enter Institution" name="mbbs">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="email">MBBS Marks (in CGPA):</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="mbbsmarks" placeholder="Enter CGPA" name="mbbsmarks">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+
+		<div id="workexpdetails" class="collapse">
+			<h2> Update your Work Experience</h2>
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="class12">Work Experience:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="workexp" placeholder="Enter Previous Work Experience" name="workexp">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="class12marks">Total Experience (in years):</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="exp" placeholder="Enter Total Experience" name="exp">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="control-label col-sm-2" for="email">Enter Specialization:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="specialization" placeholder="Enter Specialization" name="specialization">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+
+		<div id="introduction" class="collapse">
+			<h2> Update your Brief</h2>
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="class12">Short Brief about yourself:</label>
+                    <div class="col-lg-10 row-lg-5">
+                        <input type="text" class="form-control" id="intro" placeholder="Enter Description" name="intro">
+                    </div>
+                </div>
+				<div class="form-group row mt-3">        
+                    <div class="col-sm-offset-2 col-sm-12">
+                      <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+
+
+		<div id="appointmentdetails">
+			<h3>Patient details</h3>
+			<table>
+				<tr class="bg bg-warning">
+					<th>Patient Name</th>
+					<th>Patient Phone Number</th>
+					<th>Appointment Time</th>
+				</tr>
+				<% data2.forEach(element=> { %>
+					<tr>
+						<td><%= element.patient.name %></td>
+						<td><%= element.patient.phno %></td>  
+						<td><%= element.time %></td>
+						<td class="d-flex">
+							<div class="ps-3">
+								<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#patientdetails" aria-expanded="false" aria-controls="patientdetails">
+									Patient Details
+								</button>
+							</div>
+							<div class="ps-3">
+								<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#rescheduleappointment" aria-expanded="false" aria-controls="patientdetails">
+									Reschedule Appointment
+								</button>
+							</div>
+							<form action="/api/v1/delete" method="post" class="ps-3">
+								<input type="text" style="display: none;" name="id" value="<%= element._id %>">
+								<button class="btn btn-danger" type="submit">Delete Appointment</button>
+							</form>
+						</td>
+					</tr>	
+				<% }) %>
+			</table>
+		</div>
+
+		<div id="rescheduleappointment" class="collapse">
+			<h2>Select new time</h2>
+		</div>
+		
+		<div id="patientdetails" class="collapse">
+			<tr>
+				<th>Room Type</th>
+				<td><%= element.patient.room %></td>
+			</tr>
+			<tr>
+				<th>Room Number</th>
+				<td>-</td>
+			</tr>
+			<tr>
+				<th>Symptoms</th>
+				<td><%= element.patient.symptoms %></td>
+			</tr>
+		</div>
+
+
+		<div id="editshiftdetails" class="collapse">
+			<h2>Edit shift details</h2>
+			<form class="form-horizontal" action="/api/v1/editdetails" method="POST">
+				<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="shift">Start time(24hr): </label>
+					<div class="col-sm-10">          
+						<input type="text" class="form-control" id="starttime" placeholder="Enter Start time" name="start">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="shift">End time(24hr): </label>
+					<div class="col-sm-10">          
+						<input type="text" class="form-control" id="endtime" placeholder="Enter End time" name="end">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="slots">Slot duration(in minutes):</label>
+					<div class="col-sm-10">          
+						<input type="text" class="form-control" id="slottime" placeholder="Enter slot duration" name="slot">
+					</div>
+				</div>
+			<div class="form-group">        
+				<div class="col-sm-offset-2 col-sm-10 mt-3">
+					<button type="submit" class="btn btn-outline-success">Submit</button>
+				</div>
+			</div>
+			</form>
+		</div>
+    </div>    
+</body>
+  
+</html>
