@@ -346,6 +346,13 @@ const editDetails=async(req,res)=>{
                 verify:true
             })
         }
+        else if(req.body.time){
+            var appointmentdetails=await appointment.findOne({_id:req.body.appointmentId})
+            var oldtime=appointmentdetails.time
+            var docupdate=await docdata.updateOne({_id:doc._id},{$push:{"freeslots":oldtime}},{$pull:{"busyslots":oldtime}})
+            var docupdate2=await docdata.updateOne({_id:doc._id},{$pull:{"freeslots":req.body.time}},{$push:{"busyslots":req.body.time}})
+            var updateappointment=await appointment.updateOne({_id:req.body.appointmentId},{time:req.body.time})
+        }
         else if(req.body.class12){
             var update2=await docdata.updateOne({_id:doc._id},{
                 class12:req.body.class12,

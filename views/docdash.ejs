@@ -69,28 +69,14 @@
         <tr class="bg bg-warning">
           <th>Name</th>
           <th>Department</th>
-          <th>Shift</th>
-          <th>Slot Timing</th>
+          <th>Start Time</th>
+          <th>End Time</th>
         </tr>
         <tr>
             <td><%= data.name %></td>
             <td><%= data.specialization %></td>
-            <% if(data.shift=="1"){ %>
-                <td>Morning</td>
-            <%} else if(data.shift=="2") {%>
-                <td>Evening</td>
-            <%} else{%>
-                <td>-</td>
-            <%} %>
-
-            <% if(data.slots=="1"){ %>
-                <td>15 mins</td>
-            <%}else if(data.slots=="2"){ %>
-                <td>30 mins</td>
-            <%} 
-            else {%>
-                <td>-</td>
-            <%} %>
+            <td><%= data.start %></td>
+			<td><%= data.end %></td>
           </tr>
     </table>
 
@@ -330,15 +316,51 @@
 						<td><%= element.time %></td>
 						<td class="d-flex">
 							<div class="ps-3">
-								<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#patientdetails" aria-expanded="false" aria-controls="patientdetails">
-									Patient Details
-								</button>
+								<div id="patientdetails" class="collapse">
+									<tr>
+										<th>Room Type</th>
+										<td><%= element.patient.room %></td>
+									</tr>
+									<tr>
+										<th>Room Number</th>
+										<td>-</td>
+									</tr>
+									<tr>
+										<th>Symptoms</th>
+										<td><%= element.patient.symptoms %></td>
+									</tr>
+								</div>
 							</div>
+						</td>
+						<td>
 							<div class="ps-3">
-								<button class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#rescheduleappointment" aria-expanded="false" aria-controls="patientdetails">
-									Reschedule Appointment
-								</button>
+								<% if(element.time!=null){ %>
+									<td>
+										<form class="col" action="/api/v1/editdetails" method="post">
+											<input type="text" style="display:none;" name="id" value="<%= data._id %>">
+											<input type="text" style="display:none;" name="appointmentId" value="<%= element._id %>">
+											<div class="col-sm-10">
+												<label class="control-label col-sm-2" for="slot">Reschedule Appointment:</label>
+												<div class="col-sm-10">          
+												<select class="form-select" aria-label="Default select example" id="time" name="time">
+													<option selected>-</option>
+													<% data.freeslots.forEach(item=>{%>
+														<option value="<%= item %>"><%= item %></option>
+													<%}) %>
+												</select>
+												</div>
+											</div>
+											<div class="form-group row mt-3">        
+												<div class="col-sm-offset-2 col-sm-12">
+												  <button type="submit" class="btn btn-outline-success">Book Appointment</button>
+												</div>
+											</div>
+										</form> 
+									</td>
+								<%}  %>
 							</div>
+						</td>
+						<td>
 							<form action="/api/v1/delete" method="post" class="ps-3">
 								<input type="text" style="display: none;" name="id" value="<%= element._id %>">
 								<button class="btn btn-danger" type="submit">Delete Appointment</button>
@@ -347,25 +369,6 @@
 					</tr>	
 				<% }) %>
 			</table>
-		</div>
-
-		<div id="rescheduleappointment" class="collapse">
-			<h2>Select new time</h2>
-		</div>
-		
-		<div id="patientdetails" class="collapse">
-			<tr>
-				<th>Room Type</th>
-				<td><%= element.patient.room %></td>
-			</tr>
-			<tr>
-				<th>Room Number</th>
-				<td>-</td>
-			</tr>
-			<tr>
-				<th>Symptoms</th>
-				<td><%= element.patient.symptoms %></td>
-			</tr>
 		</div>
 
 
