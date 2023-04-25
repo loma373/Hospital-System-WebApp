@@ -2,6 +2,7 @@ const docdata=require('../models/doc')
 const patdata=require('../models/patient')
 const roomdata=require('../models/rooms')
 const appointment=require('../models/appointment')
+const roombooking=require('../models/roombooking')
 
 const mongoose=require('mongoose')
 const db=mongoose.connection
@@ -154,11 +155,13 @@ const PatDash=async(req,res)=>{
             const patdetails=await patdata.findOne({phno:req.session.user})
             const appointmentdetails=await appointment.find({patient:patdetails._id}).populate('doctor')
             const docs=await docdata.find({})
+            const roominfo=await roombooking.findOne({patient:patdetails._id}).populate('room')
             //console.log(docdetails)
             res.render("patdash",{
                 data:appointmentdetails,
                 data2:patdetails,
                 data3:docs,
+                data4:roominfo,
                 msg:''
             })
         } else{
@@ -406,9 +409,25 @@ const editPat=async(req,res)=>{
         const patdetails=await patdata.findById(req.body.id)
         //console.log(req.body.doc)
         if(req.body.room){
-            var roomcount=await roomdata.updateOne({name:patdetails.room}, {$inc:{quantity:1}})
-            var roomupdate=await patdata.updateOne({_id:req.body.id}, {room:req.body.room})
-            var roomcount=await roomdata.updateOne({name:req.body.room}, {$inc:{quantity:-1}})
+            var roomdetails=await roomdata.findOne({name:req.body.room})
+            var findpatroom=await roombooking.findOne({patient:patdetails._id})
+
+            if(!findpatroom){
+                var roomupdate=await roombooking.create({
+                    patient:patdetails._id,
+                    room:roomdetails._id
+                }) 
+                var roomcount=await roomdata.updateOne({_id:roomdetails._id}, {$inc:{quantity:-1}})
+            }else{
+                var roomcount0=await roomdata.updateOne({_id:findpatroom._id}, {$inc:{quantity:1}})
+                var deletebooking= await roombooking.deleteOne({_id:findpatroom._id})
+                var roomupdate=await roombooking.create({
+                    patient:patdetails._id,
+                    room:roomdetails._id
+                }) 
+                var roomcount=await roomdata.updateOne({_id:roomdetails._id}, {$inc:{quantity:-1}})
+            }
+            
         } else if(req.body.doctor){
             var addappointment=await appointment.create({
                 doctor:req.body.doctor,
