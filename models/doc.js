@@ -5,7 +5,7 @@ const docschema=mongoose.Schema({
         type:String,
         required: [true,'must provide a name'],
         trim:true,
-        maxlength:[50,'name cannot be more than 50 character']
+        maxlength:[50,'name cannot be more than 50 characters']
     },
     gender:{
         type:String
@@ -15,11 +15,9 @@ const docschema=mongoose.Schema({
     },
     phno:{
         type:Number,
-        required:[true,'must provide a valid number'],
+        required:[true,'must provide a phone number'],
         trim:true,
         unique:true,
-        maxlength:[10,'number cannot be more than 10 characters'],
-        minlength:[10,'number cannot be less than 10 characters']
     },
     specialization:{
         type:String,

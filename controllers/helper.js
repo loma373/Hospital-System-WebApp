@@ -3,6 +3,8 @@ const patdata=require('../models/patient')
 const roomdata=require('../models/rooms')
 const appointment=require('../models/appointment')
 const roombooking=require('../models/roombooking')
+const bcrypt= require('bcrypt')
+const jwt= require('jsonwebtoken')
 
 const mongoose=require('mongoose')
 const db=mongoose.connection
@@ -38,7 +40,7 @@ const patRegister=async(req,res)=>{
 
 const addDoctor=async(req,res)=>{
     try {
-        console.log("starting")
+        
         const findphno=await docdata.findOne({phno:req.body.phno})
         const findemail=await docdata.findOne({email:req.body.email})
         
@@ -49,8 +51,18 @@ const addDoctor=async(req,res)=>{
 
             return
         }
+        
         if(req.body.password==req.body.ppassword){
-            const adddoc=await docdata.create(req.body)
+            const hashedpassword= await bcrypt.hash(req.body.password, 7)
+            docInfo={
+                name: req.body.name,
+                email: req.body.email,
+                phno : req.body.phno,
+                password: hashedpassword,
+            }
+            console.log(docInfo)
+            const adddoc=await docdata.create(docInfo)
+            //console.log(adddoc)
             req.session.user=req.body.email
             res.redirect('/api/v1/docdash')
         } else{
@@ -58,7 +70,7 @@ const addDoctor=async(req,res)=>{
                 msg:'Password did not match. Try Again!'
             })
         }
-        
+
     } catch (error) {
         res.render("docadd",{
             msg:'Error please try again'
@@ -70,7 +82,7 @@ const addDoctor=async(req,res)=>{
 const addroom=async(req,res)=>{
     try {
         const addr=await roomdata.create(req.body)
-        console.log(addr)
+        //console.log(addr)
     } catch (error) {
         res.status(500).json({msg:error})
     }
@@ -115,8 +127,8 @@ const docLogin=async(req,res)=>{
         console.log("Unregistered user")
         return
     }
-
-    if(req.body.password==doc.password){
+    const isMatch= await bcrypt.compare(req.body.password, doc.password)
+    if(isMatch){
         req.session.user=req.body.email
     } else{
         res.render("login",{
